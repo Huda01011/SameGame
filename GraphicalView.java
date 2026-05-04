@@ -4,28 +4,35 @@ import java.awt.event.*;
 
 /**
  * GraphicalView - A Swing based graphical view of the SameGame.
- * 
+ *
  * Shows the game grid as colored rectangles.
- * Handles mouse clicks and passes them to the GameModel.
+ * Supports swappable input strategies (Strategy pattern).
  */
 public class GraphicalView extends JFrame implements GameView
 {
-   // Size of each tile in pixels
-   private static final int TILE_SIZE = 50;
+   // Size of each tile in pixels - public so input strategies can use it
+   public static final int TILE_SIZE = 50;
 
    // Colors for the tiles (index 1-5)
    private static final Color[] COLORS = {
-      Color.BLACK,       // 0 = empty (not used)
-      Color.RED,         // 1
-      Color.BLUE,        // 2
-      Color.GREEN,       // 3
-      Color.YELLOW,      // 4
-      Color.MAGENTA      // 5
+      Color.BLACK,
+      Color.RED,
+      Color.BLUE,
+      Color.GREEN,
+      Color.YELLOW,
+      Color.MAGENTA
    };
 
    private GameModel model;
    private JPanel gamePanel;
    private JLabel scoreLabel;
+
+   // Current input strategy (Strategy pattern)
+   private InputStrategy inputStrategy;
+
+   // Cursor position for keyboard input
+   private int cursorRow = -1;
+   private int cursorCol = -1;
 
    public GraphicalView(GameModel model)
    {
@@ -56,27 +63,57 @@ public class GraphicalView extends JFrame implements GameView
          GameModel.ROWS * TILE_SIZE
       ));
 
-      // Mouse listener for clicking tiles
-      gamePanel.addMouseListener(new MouseAdapter()
-      {
-         @Override
-         public void mousePressed(MouseEvent e)
-         {
-            int col = e.getX() / TILE_SIZE;
-            int row = e.getY() / TILE_SIZE;
-            model.click(row, col);
-         }
-      });
-
       add(gamePanel, BorderLayout.CENTER);
 
-      // New game button at the bottom
+      // Button panel at the bottom
+      JPanel buttonPanel = new JPanel();
+
       JButton newGameButton = new JButton("New Game");
       newGameButton.addActionListener(e -> model.newGame());
-      add(newGameButton, BorderLayout.SOUTH);
+
+      JButton mouseButton = new JButton("Mouse Input");
+      mouseButton.addActionListener(e -> setInputStrategy(new MouseInput()));
+
+      JButton keyboardButton = new JButton("Keyboard Input");
+      keyboardButton.addActionListener(e -> setInputStrategy(new KeyboardInput()));
+
+      buttonPanel.add(newGameButton);
+      buttonPanel.add(mouseButton);
+      buttonPanel.add(keyboardButton);
+      add(buttonPanel, BorderLayout.SOUTH);
 
       pack();
       setVisible(true);
+
+      // Default input strategy is mouse
+      setInputStrategy(new MouseInput());
+   }
+
+   /**
+    * Sets the input strategy (Strategy pattern)
+    * Disconnects the old one and connects the new one
+    */
+   public void setInputStrategy(InputStrategy strategy)
+   {
+      if (inputStrategy != null)
+         inputStrategy.disconnect(this);
+      inputStrategy = strategy;
+      inputStrategy.connect(model, this);
+   }
+
+   /**
+    * Returns the game panel (used by input strategies)
+    */
+   public JPanel getGamePanel() { return gamePanel; }
+
+   /**
+    * Sets the cursor position (used by keyboard input)
+    */
+   public void setCursor(int row, int col)
+   {
+      cursorRow = row;
+      cursorCol = col;
+      gamePanel.repaint();
    }
 
    /**
@@ -90,14 +127,18 @@ public class GraphicalView extends JFrame implements GameView
          {
             int color = model.getColor(r, c);
             if (color == 0)
-            {
                g.setColor(Color.LIGHT_GRAY);
-            }
             else
-            {
                g.setColor(COLORS[color]);
-            }
+
             g.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE - 2, TILE_SIZE - 2);
+
+            // Draw cursor
+            if (r == cursorRow && c == cursorCol)
+            {
+               g.setColor(Color.WHITE);
+               g.drawRect(c * TILE_SIZE + 2, r * TILE_SIZE + 2, TILE_SIZE - 6, TILE_SIZE - 6);
+            }
          }
       }
    }
