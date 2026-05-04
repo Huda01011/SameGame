@@ -14,6 +14,7 @@ import java.util.Random;
  */
 public class GameModel
 {
+   // Hej
    // Grid dimensions
    public static final int ROWS = 10;
    public static final int COLS = 15;
