@@ -1,6 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import javax.swing.*;
 
 /**
  * GraphicalView - A Swing based graphical view of the SameGame.
@@ -11,16 +10,27 @@ import java.awt.event.*;
 public class GraphicalView extends JFrame implements GameView
 {
    // Size of each tile in pixels - public so input strategies can use it
-   public static final int TILE_SIZE = 50;
+   //public static final int TILE_SIZE = 50;
+   public static int TILE_SIZE = 50;
+
+   // Changes size of tiles
+   public void setTileSize(int size){
+      TILE_SIZE = size;
+   }
 
    // Colors for the tiles (index 1-5)
    private static final Color[] COLORS = {
-      Color.BLACK,
+      //Color.GRAY,
       Color.RED,
       Color.BLUE,
       Color.GREEN,
+      Color.BLACK,
       Color.YELLOW,
-      Color.MAGENTA
+      Color.MAGENTA,
+      Color.CYAN,
+      Color.DARK_GRAY,
+      Color.ORANGE,
+      Color.PINK
    };
 
    private GameModel model;
@@ -129,7 +139,7 @@ public class GraphicalView extends JFrame implements GameView
             if (color == 0)
                g.setColor(Color.LIGHT_GRAY);
             else
-               g.setColor(COLORS[color]);
+               g.setColor(COLORS[color - 1]);
 
             g.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE - 2, TILE_SIZE - 2);
 

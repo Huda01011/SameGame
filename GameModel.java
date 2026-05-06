@@ -15,8 +15,11 @@ import java.util.Random;
 public class GameModel
 {
    // Grid dimensions
-   public static final int ROWS = 10;
-   public static final int COLS = 15;
+   //public static final int ROWS = 10;
+   //public static final int COLS = 15;
+
+   public static int ROWS = 10;
+   public static int COLS = 15;
 
    // 0 means empty cell
    private int[][] grid;
@@ -29,6 +32,14 @@ public class GameModel
 
    // List of observers (Observer pattern)
    private List<GameView> observers;
+
+   // Allow the size to be set, recomended a number from 1 to 10
+   public int setNumRowsAndCols(int num){
+      ROWS = num*2;
+      COLS = num*3;
+      // Returnera rekomenderad tile_size
+      return (int)(500/ROWS);
+   }
 
    /**
     * Creates a new game with the given number of colors (difficulty)
@@ -85,6 +96,21 @@ public class GameModel
 
       // Notify all observers of the change
       notifyObservers();
+   }
+
+   // Finds the largest group in the game
+   public void cheat(){
+      int[] max = new int[]{0,0,0};
+      for(int r = 0; r < ROWS; r++){
+         for(int c = 0; c < COLS; c++){
+            // Find all connected tiles of the same color
+            List<int[]> group = findGroup(r, c);
+            if(group.size() >= max[0] && grid[r][c] != 0){
+               max = new int[]{group.size(), r, c};
+            }
+         }
+      }
+      System.out.println("Cheat: " + max[2] + ", " + max[1]);
    }
 
    /**
@@ -203,5 +229,9 @@ public class GameModel
    {
       for (GameView view : observers)
          view.update(this);
+      cheat();
    }
+
+   
+   
 }
