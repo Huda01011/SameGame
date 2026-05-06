@@ -11,6 +11,7 @@ public class ConsoleView implements GameView
    {
       System.out.println("\n=== SameGame ===");
       System.out.println("Score: " + model.getScore());
+      System.out.println("Name: " + model.getName());
       System.out.println();
 
       for (int r = 0; r < GameModel.ROWS; r++)
@@ -26,9 +27,19 @@ public class ConsoleView implements GameView
          System.out.println();
       }
 
-      if (model.isWon())
-         System.out.println("\nYOU WIN!");
-      else if (model.isLost())
-         System.out.println("\nGAME OVER - No more moves!");
+
+
+      if (model.isWon()) {
+         System.out.println("\nYOU WIN! " +model.getName());
+      // Get the score and save
+         Highscores hs = new Highscores();
+         hs.load();
+         //hs.printScores();
+         hs.addScore(model.getName(), model.getScore());
+         hs.printScores();
+         hs.saveScores();
+      } else if (model.isLost()) {
+         System.out.println("\nGAME OVER "+model.getName()+"- No more moves!");
+      }
    }
 }

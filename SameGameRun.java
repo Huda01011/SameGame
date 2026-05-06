@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * SameGame - Main class that starts the game.
  * 
@@ -6,7 +8,13 @@
  * 2. ConsoleView - text output for debugging
  */
 public class SameGameRun{
-   public static void Run(String[] input){
+
+   // To use in terminal, write ex: java SameGameRun name 2 5
+   public static void Run(String[] inputs){
+      Run(Arrays.copyOfRange(inputs, 1, inputs.length), inputs[0]);
+   }
+
+   public static void Run(String[] input, String name){
 
       GameModel model = new GameModel(3);
       // Create the model with 3 colors (difficulty)
@@ -17,7 +25,7 @@ public class SameGameRun{
       } 
       
       //GameModel model = new GameModel();
-      
+      model.setName(name);
 
       // Create and attach two views (Observer pattern)
       GraphicalView graphicalView = new GraphicalView(model);
@@ -42,5 +50,9 @@ public class SameGameRun{
       
       // Start the gamep
       model.newGame();
+   }
+
+   public static void main(String[] args) {
+      Run(args);
    }
 }

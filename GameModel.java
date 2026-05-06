@@ -27,6 +27,9 @@ public class GameModel
    // Current score
    private int score;
 
+   // Name of player
+   private String player;
+
    // Number of colors (difficulty)
    private int numColors;
 
@@ -49,6 +52,16 @@ public class GameModel
    {
       this.numColors = numColors;
       observers = new ArrayList<GameView>();
+      newGame();
+   }
+
+   // Select name
+   public void setName(String name){
+      player = name;
+   }
+
+   public void newGame(String name){
+      player = name;
       newGame();
    }
 
@@ -81,8 +94,10 @@ public class GameModel
       // Need at least 2 tiles to remove
       if (group.size() < 2) return;
 
+      
       // Calculate score - more tiles = more points
       score += group.size() * group.size();
+
 
       // Remove the tiles
       for (int[] pos : group)
@@ -219,6 +234,11 @@ public class GameModel
     * Returns the current score
     */
    public int getScore() { return score; }
+
+   // Returns the name
+   public String getName() {
+      return player;
+   }
 
    // OBSERVER PATTERN methods
 

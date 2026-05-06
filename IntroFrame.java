@@ -76,12 +76,10 @@ public class IntroFrame {
                     input[0] = "3";
                     input[1] = "5";
             }
-
-            runner.Run(input);
+            runner.Run(input, name);
 
             frame.dispose();
             //openMainWindow(name, difficulty);
-            
         });
 
         panel.add(title);
