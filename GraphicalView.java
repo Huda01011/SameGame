@@ -7,8 +7,7 @@ import javax.swing.*;
  * Shows the game grid as colored rectangles.
  * Supports swappable input strategies (Strategy pattern).
  */
-public class GraphicalView extends JFrame implements GameView
-{
+public class GraphicalView extends JFrame implements GameView {
    // Size of each tile in pixels - public so input strategies can use it
    //public static final int TILE_SIZE = 50;
    public static int TILE_SIZE = 50;
@@ -22,15 +21,16 @@ public class GraphicalView extends JFrame implements GameView
    private static final Color[] COLORS = {
       //Color.GRAY,
       Color.RED,
+      Color.BLACK,
       Color.BLUE,
       Color.GREEN,
-      Color.BLACK,
-      Color.YELLOW,
       Color.MAGENTA,
+      Color.YELLOW,
       Color.CYAN,
+      Color.PINK,
       Color.DARK_GRAY,
-      Color.ORANGE,
-      Color.PINK
+      Color.ORANGE
+      
    };
 
    private GameModel model;

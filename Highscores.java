@@ -47,12 +47,17 @@ public class Highscores{
     public static void addScore(String name, int score){
         if (scores == null) scores = new ArrayList<Integer>();
         if (names == null) names = new ArrayList<String>();
-        int i = 0;
-        while(i < names.size() && scores.get(i) > score){
-            i++;
+        int index = 0;
+
+        // Find correct position
+        while (index < scores.size() && score <= scores.get(index)) {
+            index++;
         }
-        names.add(name);
-        scores.add(score);
+
+        // Insert at correct place
+        names.add(index, name);
+        scores.add(index, score);
+        
     }
 
     public static void saveScores() {
@@ -97,9 +102,10 @@ public class Highscores{
         //addScore("C", 3);
         
         load();
-        saveScores();
+        //remove(0);
         
         printScores();
+        saveScores();
 
     }
 }
