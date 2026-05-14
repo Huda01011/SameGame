@@ -1,112 +1,154 @@
 import java.io.*;
 import java.util.*;
 
-public class Highscores{
-    // Write java Highscores for the program to print the highscores
+/**
+ * HighScores - Manages the high score list for SameGame.
+ *
+ * Stores player names and scores, and saves/loads them using
+ * Java serialization so scores persist between game sessions.
+ */
+public class HighScores
+{
+   private static List<String> names;
+   private static List<Integer> scores;
 
-    private static List<String> names;
-    private static List<Integer> scores;
+   static
+   {
+      names = new ArrayList<>();
+      scores = new ArrayList<>();
+   }
 
-    static {
-        names = new ArrayList<>();
-        scores = new ArrayList<>();
-    }
+   /**
+    * Returns the score at a given index.
+    * @param index the position in the high score list
+    * @return the score at that position
+    */
+   public static int getScore(int index)
+   {
+      return scores.get(index);
+   }
 
-    public static int getScore(int index){
-        return scores.get(index);
-    }
+   /**
+    * Returns a copy of all scores.
+    * @return list of all scores
+    */
+   public static List getScores()
+   {
+      List<Integer> ret = new ArrayList<>();
+      for (int i = 0; i < scores.size(); i++)
+         ret.add(scores.get(i));
+      return ret;
+   }
 
-    public static List getScores(){
-        List<Integer> ret = new ArrayList<>();
-        for(int i = 0; i < scores.size(); i++){
-            ret.add(scores.get(i));
-        }
-        return ret;
-    }
+   /**
+    * Returns the player name at a given index.
+    * @param index the position in the high score list
+    * @return the player name at that position
+    */
+   public static String getName(int index)
+   {
+      return names.get(index);
+   }
 
-    public static String getName(int index){
-        return names.get(index);
-    }
+   /**
+    * Removes a score entry at a given index.
+    * @param index the position to remove
+    */
+   public static void remove(int index)
+   {
+      scores.remove(index);
+      names.remove(index);
+   }
 
-    public static void remove(int index){
-        int dscore = scores.remove(index);
-        String dname = names.remove(index);
-    }
+   /**
+    * Returns the number of scores in the list.
+    * @return the number of high score entries
+    */
+   public static int getSize()
+   {
+      return names.size();
+   }
 
-    public static int getSize(){
-        return names.size();
-    }
+   /**
+    * Prints all high scores to the console.
+    */
+   public static void printScores()
+   {
+      for (int i = 0; i < getSize(); i++)
+      {
+         System.out.print(getName(i) + " ");
+         System.out.println(getScore(i));
+      }
+   }
 
-    public static void printScores(){
-        for(int i = 0; i < getSize(); i++){
-            System.out.print(getName(i)+" ");
-            System.out.println(getScore(i));
-        }
-    }
+   /**
+    * Adds a new score to the high score list.
+    * @param name the player name
+    * @param score the score to add
+    */
+   public static void addScore(String name, int score)
+   {
+      if (scores == null) scores = new ArrayList<Integer>();
+      if (names == null) names = new ArrayList<String>();
+      int i = 0;
+      while (i < names.size() && scores.get(i) > score)
+         i++;
+      names.add(name);
+      scores.add(score);
+   }
 
-    public static void addScore(String name, int score){
-        if (scores == null) scores = new ArrayList<Integer>();
-        if (names == null) names = new ArrayList<String>();
-        int index = 0;
+   /**
+    * Saves all scores to a file using Java serialization.
+    * The file is named "s.dat".
+    */
+   public static void saveScores()
+   {
+      List<String[]> newScores = new ArrayList<>();
+      for (int i = 0; i < scores.size(); i++)
+         newScores.add(new String[]{getName(i), "" + getScore(i)});
+      try
+      {
+         new ObjectOutputStream(new FileOutputStream("s.dat")).writeObject(newScores);
+      }
+      catch (Exception e)
+      {
+         System.out.println("Failed to save scores.");
+      }
+   }
 
-        // Find correct position
-        while (index < scores.size() && score <= scores.get(index)) {
-            index++;
-        }
+   /**
+    * Loads scores from the saved file.
+    * If no file exists, the list is cleared.
+    */
+   public static void load()
+   {
+      try
+      {
+         Object obj = new ObjectInputStream(new FileInputStream("s.dat")).readObject();
+         List<String[]> lista = (List<String[]>) obj;
+         scores.clear();
+         names.clear();
+         for (String[] text : lista)
+         {
+            names.add(text[0]);
+            scores.add(Integer.parseInt(text[1]));
+         }
+      }
+      catch (Exception e)
+      {
+         scores.clear();
+         names.clear();
+      }
+   }
 
-        // Insert at correct place
-        names.add(index, name);
-        scores.add(index, score);
-        
-    }
-
-    public static void saveScores() {
-        List<String[]> newScores = new ArrayList<>();
-        for(int i = 0; i < scores.size(); i++){
-            newScores.add(new String[]{getName(i), ""+getScore(i)});
-        }
-        //while(getSize() > 0){ remove(0) }
-        try {
-            new ObjectOutputStream(new FileOutputStream("s.dat")).writeObject(newScores);
-        } catch (Exception e) {
-            System.out.println("Fail");
-        }
-    }
-
-    public static void load() {
-        try {
-            Object obj = new ObjectInputStream(new FileInputStream("s.dat")).readObject();
-            List<String[]> lista = (List<String[]>) obj;
-
-            scores.clear();
-            names.clear();
-
-            for(String[] text : lista){
-                names.add(text[0]);
-                scores.add(Integer.parseInt(text[1]));
-            }
-
-        } catch (Exception e) {
-            scores.clear();
-            names.clear();
-            //return new ArrayList<>();
-        }
-    }
-
-    public static void main(String[] args) {
-        
-        //addScore("A", 5);
-         
-        //addScore("B", 7);
-        //addScore("T", 1);
-        //addScore("C", 3);
-        
-        load();
-        //remove(0);
-        
-        printScores();
-        saveScores();
-
-    }
+   /**
+    * Main method for testing the high score system.
+    * @param args unused
+    */
+   public static void main(String[] args)
+   {
+      load();
+      saveScores();
+      printScores();
+   }
 }
-
