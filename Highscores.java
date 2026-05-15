@@ -7,7 +7,7 @@ import java.util.*;
  * Stores player names and scores, and saves/loads them using
  * Java serialization so scores persist between game sessions.
  */
-public class HighScores
+public class Highscores
 {
    private static List<String> names;
    private static List<Integer> scores;
@@ -61,6 +61,14 @@ public class HighScores
    }
 
    /**
+    * Removes all scores in the list
+    */
+   public static void clear(){
+      names.clear();
+      scores.clear();
+   }
+
+   /**
     * Returns the number of scores in the list.
     * @return the number of high score entries
     */
@@ -86,16 +94,21 @@ public class HighScores
     * @param name the player name
     * @param score the score to add
     */
-   public static void addScore(String name, int score)
-   {
-      if (scores == null) scores = new ArrayList<Integer>();
-      if (names == null) names = new ArrayList<String>();
-      int i = 0;
-      while (i < names.size() && scores.get(i) > score)
-         i++;
-      names.add(name);
-      scores.add(score);
-   }
+   public static void addScore(String name, int score){
+        if (scores == null) scores = new ArrayList<Integer>();
+        if (names == null) names = new ArrayList<String>();
+        int index = 0;
+
+        // Find correct position
+        while (index < scores.size() && score <= scores.get(index)) {
+            index++;
+        }
+
+        // Insert at correct place
+        names.add(index, name);
+        scores.add(index, score);
+        
+    }
 
    /**
     * Saves all scores to a file using Java serialization.
@@ -148,7 +161,8 @@ public class HighScores
    public static void main(String[] args)
    {
       load();
-      saveScores();
+      clear(); // clears the Highscore
+      saveScores(); // saves the cleared hisghscores
       printScores();
    }
 }
